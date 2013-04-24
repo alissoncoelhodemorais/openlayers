@@ -1,4 +1,4 @@
 openlayers
 ==========
 
-OpenLayers treinamento e implementações
+OpenLayers treinamento e implementações junto com o Framework Demoiselle.
