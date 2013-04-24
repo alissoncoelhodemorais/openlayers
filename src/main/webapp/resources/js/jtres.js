@@ -1,3 +1,3 @@
 function aloSemPro() {
-	alert("aloSemPro");
+//	alert("aloSemPro");
 }
