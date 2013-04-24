@@ -1,0 +1,3 @@
+function aloSemPro() {
+	alert("aloSemPro");
+}
