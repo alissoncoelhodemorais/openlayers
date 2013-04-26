@@ -34,7 +34,11 @@ municipios.setVisibility(false);
             });
             control.events.register("featureselected", this, function(e) {
 		var nome = e.feature.attributes.ESTADO;
-		// wms.mergeNewParams({CQL_FILTER: "ESTADO='" + nome + "'"});
+
+		// evitando que o usuario clique em outra parte do mapa
+		wms.mergeNewParams({CQL_FILTER: "ESTADO='" + nome + "'"});
+		control.protocol.defaultFilter = format.read("ESTADO='" + nome + "'");
+
 		nome = nome.toUpperCase(); // na municipio estah como maiusculo
 		municipios.protocol.defaultFilter = format.read("NOMEUF='" + nome +"'");
 		municipios.setVisibility(true);
