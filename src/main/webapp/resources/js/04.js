@@ -5,7 +5,7 @@ var map = new OpenLayers.Map("map-id");
 
 var format = new OpenLayers.Format.CQL();
 var wms = new OpenLayers.Layer.WMS(
-  "States WMS",
+	"States WMS",
 
 	    "http://localhost:8080/geoserver/wms",
                 {layers: "brasil:estados"}
@@ -17,12 +17,12 @@ var municipios = new OpenLayers.Layer.Vector("States", {
                 protocol: new OpenLayers.Protocol.WFS({
                     url: "http://localhost:8080/geoserver/wfs",
                     featureType: "municipios",
+		defaultFilter: format.read("NOMEUF = '8838509djsd'"),
                     featureNS: "http://brasil"
                 })            });
 
-var options = {defaultFilter: format.read("NOMEUF = '8838509djsd'")};
-municipios.addOptions(options);
 map.addLayer(municipios);
+municipios.setVisibility(false);
 
 
             control = new OpenLayers.Control.GetFeature({
@@ -33,10 +33,11 @@ map.addLayer(municipios);
                 toggleKey: "ctrlKey"
             });
             control.events.register("featureselected", this, function(e) {
-		wms.setVisibility(false);
 		var nome = e.feature.attributes.ESTADO;
+		// wms.mergeNewParams({CQL_FILTER: "ESTADO='" + nome + "'"});
 		nome = nome.toUpperCase(); // na municipio estah como maiusculo
-		municipios.addOptions({defaultFilter: format.read("NOMEUF='" + nome +"'")});
+		municipios.protocol.defaultFilter = format.read("NOMEUF='" + nome +"'");
+		municipios.setVisibility(true);
 		map.zoomToExtent(e.feature.geometry.getBounds());
 
             });
