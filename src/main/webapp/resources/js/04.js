@@ -38,6 +38,7 @@ municipios.setVisibility(false);
 		nome = nome.toUpperCase(); // na municipio estah como maiusculo
 		municipios.protocol.defaultFilter = format.read("NOMEUF='" + nome +"'");
 		municipios.setVisibility(true);
+		municipios.refresh({force: true});
 		map.zoomToExtent(e.feature.geometry.getBounds());
 
             });
