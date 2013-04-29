@@ -1,0 +1,85 @@
+<!--
+    Exemplo que adiciona várias camadas, tanto WMS quanto WFS. 
+    Usa uma camada OSM como camada base do mapa e faz uso de camadas com sistemas de referência distintos.
+    Seleciona um determinada feature da camada WFS com o controle SelectFeature		
+-->
+
+<html>
+<head>
+<script src="../../lib/OpenLayers.js"></script>
+
+<script>
+
+  function init() {
+
+		var map = new OpenLayers.Map({
+			div: "map-id",
+		        projection: new OpenLayers.Projection("EPSG:4326")
+		});
+
+		var format = new OpenLayers.Format.CQL();
+		var wms = new OpenLayers.Layer.WMS(
+				"States WMS",
+				"http://localhost:8080/geoserver/wms",
+				{layers: "curso:brasil"}
+			    );
+		map.addLayer(wms);
+
+		var municipios = new OpenLayers.Layer.Vector("States", {
+				    strategies: [new OpenLayers.Strategy.BBOX()],
+				    protocol: new OpenLayers.Protocol.WFS({
+				    url: "http://localhost:8080/geoserver/wfs",
+				    featureType: "municipios",
+				    defaultFilter: format.read("NOMEUF = '8838509djsd'"),
+				    featureNS: "http://www.serpro.gov.br/gis/curso"
+				}) });
+
+		map.addLayer(municipios);
+		municipios.setVisibility(false);
+
+
+		control = new OpenLayers.Control.GetFeature({
+			protocol: OpenLayers.Protocol.WFS.fromWMSLayer(wms),
+			box: false,
+			hover: false,
+			multipleKey: "shiftKey",
+			toggleKey: "ctrlKey"
+		});
+
+		control.events.register("featureselected", this, function(e) {
+
+				var nome = e.feature.attributes.estado;
+
+				// evitando que o usuario clique em outra parte do mapa
+				wms.mergeNewParams({CQL_FILTER: "estado='" + nome + "'"});
+				control.protocol.defaultFilter = format.read("estado='" + nome + "'");
+
+				nome = nome.toUpperCase(); // na municipio estah como maiusculo
+				municipios.protocol.defaultFilter = format.read("NOMEUF='" + nome +"'");
+				municipios.setVisibility(true);
+				municipios.refresh({force: true});
+				map.zoomToExtent(e.feature.geometry.getBounds());
+
+  	         });
+
+		map.addControl(control);
+		control.activate();
+
+
+		var mapProjection = map.getProjectionObject();
+		var proj4326 = new OpenLayers.Projection("EPSG:4326");
+		map.setCenter(new OpenLayers.LonLat(-51,-12).transform(proj4326, mapProjection), 4);
+ }
+
+
+
+</script>
+
+</head>
+
+<body onLoad="init()">
+<div id="map-id" style="height: 512px; width: 512px"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!--
+    Exemplo que adiciona várias camadas, tanto WMS quanto WFS. 
+    Usa uma camada OSM como camada base do mapa e faz uso de camadas com sistemas de referência distintos.
+    Seleciona um determinada feature da camada WFS com o controle SelectFeature		
+-->
+
+<html>
+<head>
+<script src="../../lib/OpenLayers.js"></script>
+
+<script>
+
+var map;
+var brasil_wfs, municipios_wfs;
+var format;
+
+  function init() {
+	map = new OpenLayers.Map({
+	        div: "map-id",
+                projection: new OpenLayers.Projection("EPSG:900913")
+	});
+
+	format = new OpenLayers.Format.CQL();
+
+	var osm = new OpenLayers.Layer.OSM({isBaseLayer: "true"});
+	
+	brasil_wfs = new OpenLayers.Layer.Vector("Editable Features", {
+ 		strategies: [new OpenLayers.Strategy.BBOX()],
+		projection: new OpenLayers.Projection("EPSG:4326"),
+		protocol: new OpenLayers.Protocol.WFS({
+		    version: "1.1.0",
+		    srsName: "EPSG:4326",
+		    url: "http://localhost:8080/geoserver/wfs",
+		    featureNS :  "http://www.serpro.gov.br/gis/curso",
+		    featureType : "brasil",			
+		    geometryName: "geom"
+		})
+	    });
+
+
+	municipios_wfs = new OpenLayers.Layer.Vector("Editable Features", {
+ 		strategies: [new OpenLayers.Strategy.BBOX()],
+		projection: new OpenLayers.Projection("EPSG:4326"),
+		protocol: new OpenLayers.Protocol.WFS({
+		    version: "1.1.0",
+		    srsName: "EPSG:4326",
+		    url: "http://localhost:8080/geoserver/wfs",
+		    featureNS :  "http://www.serpro.gov.br/gis/curso",
+		    featureType : "municipios",			
+		    geometryName: "the_geom"
+		})
+	    });
+
+	map.addLayers([osm,brasil_wfs,municipios_wfs]);
+
+	municipios_wfs.setVisibility(false);
+
+
+	var brasil_highlightCtrl = new OpenLayers.Control.SelectFeature(brasil_wfs, {
+                hover: true,
+                highlightOnly: true,
+                renderIntent: "temporary"
+
+        });
+
+        var brasil_selectCtrl = new OpenLayers.Control.SelectFeature(brasil_wfs,
+                {clickout: true,
+		 onSelect: onSelectBrasilFeature
+		}
+        );
+
+	var municipio_highlightCtrl = new OpenLayers.Control.SelectFeature(municipios_wfs, {
+                hover: true,
+                highlightOnly: true,
+                renderIntent: "temporary"
+
+        });
+
+        var municipio_selectCtrl = new OpenLayers.Control.SelectFeature(municipios_wfs,
+                {clickout: true,
+		 onSelect: onSelectMunicipioFeature
+		}
+        );
+
+        map.addControl(brasil_highlightCtrl);
+        map.addControl(brasil_selectCtrl);
+        map.addControl(municipio_highlightCtrl);
+        map.addControl(municipio_selectCtrl);
+
+        brasil_highlightCtrl.activate();
+        brasil_selectCtrl.activate();
+
+        municipio_highlightCtrl.activate();
+        municipio_selectCtrl.activate();
+
+
+	map.setCenter(
+                new OpenLayers.LonLat(-51, -12).transform(
+                    new OpenLayers.Projection("EPSG:4326"),
+                    map.getProjectionObject()
+                ), 4
+            );
+ }
+
+ function onSelectBrasilFeature(feat){
+
+	var nome = feat.attributes.estado;
+
+	//Caso queira mostrar somente a feature do estado selecionado, remover os comentários seguintes.
+ 
+	//brasil_wfs.protocol.defaultFilter = format.read("estado='" + nome + "'");
+	//brasil_wfs.refresh({force: true});
+
+	nome = nome.toUpperCase(); // na municipio estah como maiusculo
+	municipios_wfs.protocol.defaultFilter = format.read("NOMEUF='" + nome +"'");
+	municipios_wfs.setVisibility(true);
+	municipios_wfs.refresh({force: true});
+	map.zoomToExtent(feat.geometry.getBounds());
+
+ }
+
+ function onSelectMunicipioFeature(feat){
+	alert("Municipio: " + feat.attributes.NOME_1);
+ }
+
+
+</script>
+
+</head>
+
+<body onLoad="init()">
+<div id="map-id" style="height: 512px; width: 512px"></div>
+
+</body>
+
+</html>
