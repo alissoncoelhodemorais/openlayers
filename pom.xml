@@ -5,8 +5,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>g</groupId>
-	<artifactId>a</artifactId>
+	<groupId>treinamento</groupId>
+	<artifactId>openlayers</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
