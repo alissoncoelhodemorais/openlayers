@@ -1,0 +1,194 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.2. Creating New Features &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="4. Vector Layers" href="index.html" />
+    <link rel="next" title="4.3. Persisting Features" href="persist.html" />
+    <link rel="prev" title="4.1. Working with Vector Layers" href="concepts.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="concepts.html"
+                        title="previous chapter">4.1. Working with Vector Layers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="persist.html"
+                        title="next chapter">4.3. Persisting Features</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="creating-new-features">
+<span id="openlayers-vector-draw"></span><h1>4.2. Creating New Features<a class="headerlink" href="#creating-new-features" title="Permalink to this headline">¶</a></h1>
+<p>OpenLayers provides controls for drawing and modifying vector features. The <tt class="docutils literal"><span class="pre">OpenLayers.Control.DrawFeature</span></tt> control can be used in conjunction with an <tt class="docutils literal"><span class="pre">OpenLayers.Handler.Point</span></tt>, an <tt class="docutils literal"><span class="pre">OpenLayers.Handler.Path</span></tt>, or an <tt class="docutils literal"><span class="pre">OpenLayers.Handler.Polygon</span></tt> instance to draw points, lines, polygons, and their multi-part counterparts. The <tt class="docutils literal"><span class="pre">OpenLayers.Control.ModifyFeature</span></tt> control can be used to allow modification of geometries for existing features.</p>
+<p>In this section, we&#8217;ll add a control to the map for drawing new polygon features. As with the other examples in this workshop, this is not supposed to be a complete working application&#8211;as it does not allow editing of attributes or saving of changes. We&#8217;ll take a look at persistence in the <a class="reference internal" href="persist.html#openlayers-vector-persist"><em>next section</em></a>.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">We&#8217;ll start with a working example that displays building footprints in a vector layer over a base layer.  Open your text editor and save the following as <tt class="docutils literal"><span class="pre">map.html</span></tt> in the root of your workshop directory:</p>
+<div class="highlight-html" id="openlayers-vector-draw-example"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+                <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+                <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+            <span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+                <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+                <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+            <span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Medford Streets &amp; Buildings&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;/geoserver/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;medford&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">()],</span>
+                <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+                    <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+                    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+                    <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+                    <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+                    <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+                <span class="p">})</span>
+            <span class="p">});</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">buildings</span><span class="p">);</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Open this <tt class="docutils literal"><span class="pre">map.html</span></tt> example in your browser to confirm that buildings are displayed over the base layer:  <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+<li><p class="first">To this example, we&#8217;ll be adding a control to draw features.  In order that users can also navigate with the mouse, we don&#8217;t want this control to be active all the time.  We need to add some elements to the page that will allow for control activation and deactivation.  In the <tt class="docutils literal"><span class="pre">&lt;body&gt;</span></tt> of your document, add the following markup.  (Placing it right after the map viewport element <tt class="docutils literal"><span class="pre">&lt;div</span> <span class="pre">id=&quot;map-id&quot;&gt;&lt;/div&gt;</span></tt> makes sense.):</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;toggle-id&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;toggle-id&quot;</span><span class="nt">&gt;</span>draw<span class="nt">&lt;/label&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now we&#8217;ll create an <tt class="docutils literal"><span class="pre">OpenLayers.Control.DrawFeature</span></tt> control to add features to the buildings layer.  We construct this layer with an <tt class="docutils literal"><span class="pre">OpenLayers.Handler.Polygon</span></tt> to allow drawing of polygons.  In your map initialization code, add the following somewhere after the creation of the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">draw</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">DrawFeature</span><span class="p">(</span>
+    <span class="nx">buildings</span><span class="p">,</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Handler</span><span class="p">.</span><span class="nx">Polygon</span>
+<span class="p">);</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">draw</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Finally, we&#8217;ll add behavior to the <tt class="docutils literal"><span class="pre">&lt;input&gt;</span></tt> element in order to activate and deactivate the draw control when the user clicks the checkbox.  We&#8217;ll also call the <tt class="docutils literal"><span class="pre">toggle</span></tt> function when the page loads to synchronize the checkbox and control states.  Add the following to your map initialization code:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">toggle</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;toggle-id&quot;</span><span class="p">).</span><span class="nx">checked</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">draw</span><span class="p">.</span><span class="nx">activate</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">draw</span><span class="p">.</span><span class="nx">deactivate</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;toggle-id&quot;</span><span class="p">).</span><span class="nx">onclick</span> <span class="o">=</span> <span class="nx">toggle</span><span class="p">;</span>
+<span class="nx">toggle</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and reload <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/draw1.png" src="../_images/draw1.png" />
+<p class="caption">A control for adding features to a vector layer.</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="persist.html" title="4.3. Persisting Features"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="concepts.html" title="4.1. Working with Vector Layers"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">4. Vector Layers</a> &raquo;</li>
+        <li><a href="#">4.2. Creating New Features</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

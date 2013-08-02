@@ -1,0 +1,203 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.5. Styling Vector Layers &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="4. Vector Layers" href="index.html" />
+    <link rel="next" title="5. Integration with Other Frameworks" href="../integration/index.html" />
+    <link rel="prev" title="4.4. Understanding Style" href="style-intro.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="style-intro.html"
+                        title="previous chapter">4.4. Understanding Style</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../integration/index.html"
+                        title="next chapter">5. Integration with Other Frameworks</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="styling-vector-layers">
+<span id="openlayers-style"></span><h1>4.5. Styling Vector Layers<a class="headerlink" href="#styling-vector-layers" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic">
+<li><p class="first">We&#8217;ll start with a working example that displays building footprints in a vector layer over a base layer.  Open your text editor and save the following as <tt class="docutils literal"><span class="pre">map.html</span></tt> in the root of your workshop directory:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+                <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+                <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+            <span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+                <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+                <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+            <span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Medford Streets &amp; Buildings&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;/geoserver/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;medford&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">()],</span>
+                <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+                    <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+                    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+                    <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+                    <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+                    <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+                <span class="p">})</span>
+            <span class="p">});</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">buildings</span><span class="p">);</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Open this <tt class="docutils literal"><span class="pre">map.html</span></tt> file in your browser to see orange buildings over  the base layer:  <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+<li><p class="first">With a basic understanding of <a class="reference internal" href="style-intro.html#openlayers-vector-style-intro"><em>styling in OpenLayers</em></a>, we can create an <tt class="docutils literal"><span class="pre">OpenLayers.StyleMap</span></tt> that displays buildings in different colors based on the size of their footprint. In your map initialization code, replace the constructor for the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer with the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">()],</span>
+    <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+        <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+        <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+        <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+        <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+    <span class="p">}),</span>
+    <span class="nx">styleMap</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">StyleMap</span><span class="p">({</span>
+        <span class="s2">&quot;default&quot;</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Style</span><span class="p">({</span>
+            <span class="nx">strokeColor</span><span class="o">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+            <span class="nx">strokeWidth</span><span class="o">:</span> <span class="mi">1</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span>
+                <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Rule</span><span class="p">({</span>
+                    <span class="nx">filter</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">({</span>
+                        <span class="nx">type</span><span class="o">:</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">.</span><span class="nx">LESS_THAN</span><span class="p">,</span>
+                        <span class="nx">property</span><span class="o">:</span> <span class="s2">&quot;shape_area&quot;</span><span class="p">,</span>
+                        <span class="nx">value</span><span class="o">:</span> <span class="mi">3000</span>
+                    <span class="p">}),</span>
+                    <span class="nx">symbolizer</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;olive&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}),</span>
+                <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Rule</span><span class="p">({</span>
+                    <span class="nx">elseFilter</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">symbolizer</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;navy&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">})</span>
+            <span class="p">]</span>
+        <span class="p">})</span>
+    <span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and open <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/style1.png" src="../_images/style1.png" />
+<p class="caption">Buildings colored by footprint area.</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="../integration/index.html" title="5. Integration with Other Frameworks"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="style-intro.html" title="4.4. Understanding Style"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">4. Vector Layers</a> &raquo;</li>
+        <li><a href="#">4.5. Styling Vector Layers</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

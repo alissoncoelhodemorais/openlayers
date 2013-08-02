@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.1. Creating an Overview Map &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="3. Working With Controls" href="index.html" />
+    <link rel="next" title="3.2. Displaying a Scale Bar" href="scaleline.html" />
+    <link rel="prev" title="3. Working With Controls" href="index.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.1. Creating an Overview Map</a><ul>
+<li><a class="reference internal" href="#discussion">3.1.1. Discussion</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">3. Working With Controls</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scaleline.html"
+                        title="next chapter">3.2. Displaying a Scale Bar</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="creating-an-overview-map">
+<span id="openlayers-controls-overview"></span><h1>3.1. Creating an Overview Map<a class="headerlink" href="#creating-an-overview-map" title="Permalink to this headline">¶</a></h1>
+<p>Online maps often contain a smaller <em>overview map</em> that displays the extent of the larger map. In OpenLayers, this is possible using the <tt class="docutils literal"><span class="pre">OpenLayers.Control.OverviewMap</span></tt> control.</p>
+<p>Let&#8217;s create a map with a single layer and then add an overview map control.</p>
+<p class="rubric" id="openlayers-controls-overview-example">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Open a text editor and save the following page as <tt class="docutils literal"><span class="pre">map.html</span></tt> in the root of your workshop directory:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+                <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+                <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+            <span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+                <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+                <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+            <span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Medford Streets &amp; Buildings&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;/geoserver/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;medford&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Open the working map in your web browser to confirm things look good: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a>.</p>
+</li>
+<li><p class="first">We are now going to add an overview map with default options to confirm things are properly working. Somewhere in your map initialization code (after the creation of the <tt class="docutils literal"><span class="pre">map</span></tt> object), insert the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">overview</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">OverviewMap</span><span class="p">({</span>
+    <span class="nx">mapOptions</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+        <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+        <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+        <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+        <span class="nx">maxResolution</span><span class="o">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">overview</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and refresh <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+<li><p class="first">To see the overview map in action, open the <em class="guilabel">plus sign</em> at right of the map viewport.</p>
+<div class="figure">
+<img alt="../_images/overview1.png" src="../_images/overview1.png" />
+</div>
+<p>An overview map control inside the main map viewport.</p>
+</li>
+</ol>
+<div class="section" id="discussion">
+<h2>3.1.1. Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h2>
+<p>The map in this example includes a few things you may not have seen before:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+    <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+    <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+<span class="p">);</span>
+<span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+    <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+    <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+    <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+    <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>First, we construct the map in a custom projection. The OpenLayers default is to construct maps in a geographic projection, with units in decimal degrees.  Because of the nature of the Medford dataset, we define a <tt class="docutils literal"><span class="pre">projection</span></tt> more appropriate for this area (i.e., Oregon State Plane South). This change in projection also requires setting the map <tt class="docutils literal"><span class="pre">units</span></tt> to feet (&#8220;ft&#8221;).</p>
+<p>The second thing to note is the use of the <tt class="docutils literal"><span class="pre">restrictedExtent</span></tt> property. This optional property restricts map panning to the given bounds. The imagery data used by the <tt class="docutils literal"><span class="pre">medford</span></tt> layer is limited to these bounds.  To keep users from panning off the edge of our base layer, we set the <tt class="docutils literal"><span class="pre">restrictedExtent</span></tt> to the bounds of the data.</p>
+<p>The final set of custom options are related to map resolutions. By default, a map will be set up to view the entire world in two 256x256 tiles when all the way zoomed out. Since we want to focus on a very limited subset of the world, we set the <tt class="docutils literal"><span class="pre">maxResolution</span></tt> property. A value of 2.5 means 2.5 feet per pixel (since we set map units to feet). When users are zoomed all the way out, they will be seeing 2.5 feet per pixel. We also specify that we only want 5 zoom levels instead of the default 16 levels.</p>
+<p>The overview map constructor also deserves a bit of discussion:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">overview</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">OverviewMap</span><span class="p">({</span>
+    <span class="nx">mapOptions</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+        <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+        <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+        <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+        <span class="nx">maxResolution</span><span class="o">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">overview</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Like the custom <tt class="docutils literal"><span class="pre">map</span></tt> above, customization to the <tt class="docutils literal"><span class="pre">overview</span></tt> map control  must also be specified. So, for every non-default property set for the main map, we need a corresponding property for the map created by the control.</p>
+<p>We want <tt class="docutils literal"><span class="pre">projection</span></tt>, <tt class="docutils literal"><span class="pre">units</span></tt>, <tt class="docutils literal"><span class="pre">restrictedExtent</span></tt> and <tt class="docutils literal"><span class="pre">numZoomLevels</span></tt> to be the same for the overview map as well as the main map. However, in order for the overview map to zoom &#8220;farther out&#8221; we want a different <tt class="docutils literal"><span class="pre">maxResolution</span></tt> property. The appropriate values for your application can be determined by trial and error or calculations based on how much data you want to show (given the map size).</p>
+<p>Next we&#8217;ll build upon our map to include a <a class="reference internal" href="scaleline.html#openlayers-controls-scaleline"><em>scale bar</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="scaleline.html" title="3.2. Displaying a Scale Bar"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="index.html" title="3. Working With Controls"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">3. Working With Controls</a> &raquo;</li>
+        <li><a href="#">3.1. Creating an Overview Map</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

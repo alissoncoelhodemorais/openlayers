@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.5. The Ext JS Slider &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="5. Integration with Other Frameworks" href="index.html" />
+    <link rel="next" title="5.6. The Ext JS Window" href="ext-window.html" />
+    <link rel="prev" title="5.4. Exploring Ext JS" href="ext.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5.5. The Ext JS Slider</a><ul>
+<li><a class="reference internal" href="#using-a-slider-to-control-layer-opacity">5.5.1. Using a Slider to Control Layer Opacity</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ext.html"
+                        title="previous chapter">5.4. Exploring Ext JS</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ext-window.html"
+                        title="next chapter">5.6. The Ext JS Window</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-ext-js-slider">
+<span id="openlayers-integration-ext-slider"></span><h1>5.5. The Ext JS Slider<a class="headerlink" href="#the-ext-js-slider" title="Permalink to this headline">¶</a></h1>
+<p>As with the jQuery sliders, an Ext slider provides a widget for collecting a
+user supplied value within some range. This exercise will duplicate the
+functionality put together in the <a class="reference internal" href="jqui-slider.html#openlayers-integration-jqui-slider"><em>jQuery UI slider</em></a> section above.</p>
+<p>The configuration for Ext widgets is extremely flexible. One way to create a
+slider widget is to start with a DOM element that will serve as the slider
+container.</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;slider&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+<p>Given the above, the following code creates a functioning Ext slider.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ext</span><span class="p">.</span><span class="nx">Slider</span><span class="p">({</span><span class="nx">renderTo</span><span class="o">:</span> <span class="s2">&quot;slider&quot;</span><span class="p">});</span>
+</pre></div>
+</div>
+<p>We&#8217;ll use the above technique to create a slider for controlling layer opacity.</p>
+<div class="section" id="using-a-slider-to-control-layer-opacity">
+<h2>5.5.1. Using a Slider to Control Layer Opacity<a class="headerlink" href="#using-a-slider-to-control-layer-opacity" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ll start with a working example that displays one <abbr title="OGC Web Map Service">WMS</abbr> layer and one vector layer with features from a <abbr title="OGC Web Feature Service">WFS</abbr>.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Open your text editor and paste in the code used at the <cite>start</cite> of the
+<a class="reference internal" href="jqui-slider.html#openlayers-integration-jqui-slider-example"><em>previous slider example</em></a>.
+Save this as <tt class="docutils literal"><span class="pre">map.html</span></tt> in the root of your workshop directory.</p>
+</li>
+<li><p class="first">Next we need to pull in the Ext resources that our widget will require.
+Add the following markup to the <tt class="docutils literal"><span class="pre">&lt;head&gt;</span></tt> of your <tt class="docutils literal"><span class="pre">map.html</span></tt> document:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;ext/resources/css/ext-all.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;ext/adapter/ext/ext-base.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;ext/ext-all.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now we&#8217;ll create some markup that will create a container for the slider
+widget. In the <tt class="docutils literal"><span class="pre">&lt;body&gt;</span></tt> of your <tt class="docutils literal"><span class="pre">map.html</span></tt> file, just after the map
+viewport, insert the following:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;slider-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">One bit of preparation before finalizing the code is to style the slider container.
+In this case, we&#8217;ll make it as
+wide as the map and give it some margin. Insert the following style
+declarations into the <tt class="docutils literal"><span class="pre">&lt;style&gt;</span></tt> element within the <tt class="docutils literal"><span class="pre">&lt;head&gt;</span></tt> of your
+document:</p>
+<div class="highlight-html"><div class="highlight"><pre>#slider-id {
+    width: 492px;
+    margin: 10px;
+}
+</pre></div>
+</div>
+</li>
+<li><p class="first">Somewhere in your map initialization code, add the following to create a
+slider in the container element and set up the slider listener to change
+layer opacity:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ext</span><span class="p">.</span><span class="nx">Slider</span><span class="p">({</span>
+    <span class="nx">renderTo</span><span class="o">:</span> <span class="s2">&quot;slider-id&quot;</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nx">listeners</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">change</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">base</span><span class="p">.</span><span class="nx">setOpacity</span><span class="p">(</span><span class="nx">val</span> <span class="o">/</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes to <tt class="docutils literal"><span class="pre">map.html</span></tt> and open the page in your browser:
+<a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/ext-slider1.png" src="../_images/ext-slider1.png" />
+<p class="caption">A map with a slider widget to control layer opacity.</p>
+</div>
+</li>
+</ol>
+<p class="rubric">Bonus Task</p>
+<ol class="arabic simple">
+<li>Find the Slider widget in the Ext JS documentation.  Locate the
+configuration option that allows you to specify a set of intervals for
+setting the slider value. Experiment with adding a set of intervals to the
+slider. Configure the slider to restrict the range of opacity values that
+can be set.</li>
+</ol>
+<p>With a functioning layer opacity slider in your application, you&#8217;re ready to
+move on to <a class="reference internal" href="ext-window.html#openlayers-integration-ext-window"><em>working with windows</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="ext-window.html" title="5.6. The Ext JS Window"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="ext.html" title="5.4. Exploring Ext JS"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">5. Integration with Other Frameworks</a> &raquo;</li>
+        <li><a href="#">5.5. The Ext JS Slider</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

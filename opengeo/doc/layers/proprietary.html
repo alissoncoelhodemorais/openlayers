@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.3. Proprietary Layers &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="2. Working With Layers" href="index.html" />
+    <link rel="next" title="2.4. Vector Layers" href="vector.html" />
+    <link rel="prev" title="2.2. Cached Tiles" href="cached.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.3. Proprietary Layers</a><ul>
+<li><a class="reference internal" href="#bing">2.3.1. Bing!</a><ul>
+<li><a class="reference internal" href="#complete-working-example">2.3.1.1. Complete Working Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cached.html"
+                        title="previous chapter">2.2. Cached Tiles</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vector.html"
+                        title="next chapter">2.4. Vector Layers</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="proprietary-layers">
+<span id="openlayers-layers-proprietary"></span><h1>2.3. Proprietary Layers<a class="headerlink" href="#proprietary-layers" title="Permalink to this headline">¶</a></h1>
+<p>In previous sections, we displayed layers based on a standards compliant <abbr title="OGC Web Map Service">WMS</abbr> and a custom tile cache. Online mapping (or at least the tiled map client) was largely popularized by the availability of proprietary map tile services. OpenLayers provides layer types that work with these proprietary services through their APIs.</p>
+<p>In this section, we&#8217;ll build on the example developed in the <a class="reference internal" href="cached.html#openlayers-layers-cached-example"><em>previous section</em></a> by adding a layer using tiles from Bing, and we&#8217;ll toss in a layer switcher so you can decide which layers you want visible.</p>
+<div class="section" id="bing">
+<span id="openlayers-layer-proprietary-bing"></span><h2>2.3.1. Bing!<a class="headerlink" href="#bing" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s add a Bing layer.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">In your <tt class="docutils literal"><span class="pre">map.html</span></tt> file, find where the <abbr title="OpenStreetMap">OSM</abbr> layer is added in the map initialization code. Below the <tt class="docutils literal"><span class="pre">map.addLayer(osm);</span></tt> line, add the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">bing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Bing</span><span class="p">({</span>
+    <span class="nx">key</span><span class="o">:</span> <span class="s2">&quot;AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf&quot;</span><span class="p">,</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span>
+<span class="p">});</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">bing</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Bing tiles API requires that you register for an API key to use with your mapping application.  The example here uses an API key that you should not use in production.  To use the Bing layer in production, register for an API key at <a class="reference external" href="https://www.bingmapsportal.com/">https://www.bingmapsportal.com/</a>.</p>
+</div>
+</li>
+<li><p class="first">Now that we have more than one layer in our map, it is time to add a layer switcher that controls layer visibility. Somewhere in your map initialization code (below the part where we create the <tt class="docutils literal"><span class="pre">map</span></tt>), include the following to create a layer switcher and add it to the map:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">LayerSwitcher</span><span class="p">());</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and reload <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+<li><p class="first">Open the Layer Switcher at the upper right-hand corner of the map view, and select &#8220;Bing Roads&#8221;.</p>
+</li>
+</ol>
+<div class="figure">
+<img alt="../_images/proprietary1.png" src="../_images/proprietary1.png" />
+<p class="caption">A map with a bing layer and OpenStreetMap tiles.</p>
+</div>
+<div class="section" id="complete-working-example">
+<h3>2.3.1.1. Complete Working Example<a class="headerlink" href="#complete-working-example" title="Permalink to this headline">¶</a></h3>
+<p>Your revised <tt class="docutils literal"><span class="pre">map.html</span></tt> file should look something like this:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nc">.olControlAttribution</span> <span class="p">{</span>
+                <span class="k">font-size</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+                <span class="k">bottom</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+                <span class="k">left</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">center</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">LonLat</span><span class="p">(</span><span class="o">-</span><span class="mf">93.27</span><span class="p">,</span> <span class="mf">44.98</span><span class="p">).</span><span class="nx">transform</span><span class="p">(</span>
+                <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span> <span class="s1">&#39;EPSG:3857&#39;</span>
+            <span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">projection</span><span class="o">:</span> <span class="s1">&#39;EPSG:3857&#39;</span><span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">osm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">OSM</span><span class="p">();</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">osm</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">bing</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Bing</span><span class="p">({</span>
+                <span class="nx">key</span><span class="o">:</span> <span class="s2">&quot;AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf&quot;</span><span class="p">,</span>
+                <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span>
+            <span class="p">});</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">bing</span><span class="p">);</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">LayerSwitcher</span><span class="p">());</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">setCenter</span><span class="p">(</span><span class="nx">center</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+<p>Next we&#8217;ll move on from raster layers and begin working with <a class="reference internal" href="vector.html#openlayers-layers-vector"><em>vector layers</em></a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="vector.html" title="2.4. Vector Layers"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="cached.html" title="2.2. Cached Tiles"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">2. Working With Layers</a> &raquo;</li>
+        <li><a href="#">2.3. Proprietary Layers</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

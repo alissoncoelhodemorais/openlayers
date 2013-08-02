@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Map</title>
+        <link rel="stylesheet" href="openlayers/theme/default/style.css" type="text/css">
+        <style>
+            #map-id {
+                width: 512px;
+                height: 256px;
+            }
+        </style>
+        <script src="openlayers/lib/OpenLayers.js"></script>
+    </head>
+    <body>
+        <h1>My Map</h1>
+        <div id="map-id"></div>
+        <script>
+            var map = new OpenLayers.Map("map-id");
+            var imagery = new OpenLayers.Layer.WMS(
+                "Global Imagery",
+                "http://maps.opengeo.org/geowebcache/service/wms",
+                {layers: "bluemarble"}
+            );
+            map.addLayer(imagery);
+            
+            var earthquakes = new OpenLayers.Layer.Vector("Earthquakes", {
+			strategies: [new OpenLayers.Strategy.Cluster()],
+			protocol: new OpenLayers.Protocol.HTTP({
+				// url: "data/layers/7day-M2.5.xml", // brasil-ouro.xml",
+				url: "brasil-ouro.xml",
+				format: new OpenLayers.Format.GeoRSS()
+					})
+			});
+			map.addLayer(earthquakes);
+            
+            map.zoomToMaxExtent();
+        </script>
+    </body>
+</html>
+

@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.2. Displaying a Scale Bar &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="3. Working With Controls" href="index.html" />
+    <link rel="next" title="3.3. Selecting Features" href="select.html" />
+    <link rel="prev" title="3.1. Creating an Overview Map" href="overview.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.2. Displaying a Scale Bar</a><ul>
+<li><a class="reference internal" href="#creating-a-scaleline-control">3.2.1. Creating a ScaleLine Control</a></li>
+<li><a class="reference internal" href="#moving-the-scaleline-control">3.2.2. Moving the ScaleLine Control</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">3.1. Creating an Overview Map</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="select.html"
+                        title="next chapter">3.3. Selecting Features</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="displaying-a-scale-bar">
+<span id="openlayers-controls-scaleline"></span><h1>3.2. Displaying a Scale Bar<a class="headerlink" href="#displaying-a-scale-bar" title="Permalink to this headline">¶</a></h1>
+<p>Another typical widget to display on maps is a scale bar.  OpenLayers provides an <tt class="docutils literal"><span class="pre">OpenLayers.Control.ScaleLine</span></tt> for just this.  We&#8217;ll continue building on the <a class="reference internal" href="overview.html#openlayers-controls-overview-example"><em>previous example</em></a> by adding a scale bar.</p>
+<div class="section" id="creating-a-scaleline-control">
+<h2>3.2.1. Creating a ScaleLine Control<a class="headerlink" href="#creating-a-scaleline-control" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Open the <tt class="docutils literal"><span class="pre">map.html</span></tt> produced in the <a class="reference internal" href="overview.html#openlayers-controls-overview-example"><em>previous example</em></a> in your text editor.</p>
+</li>
+<li><p class="first">Somewhere in the map initialization (below the <tt class="docutils literal"><span class="pre">map</span></tt> constructor), add the following code to create a new scale line control for your map:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">scaleline</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">ScaleLine</span><span class="p">();</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">scaleline</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and open <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/scaleline1.png" src="../_images/scaleline1.png" />
+</div>
+<p>A default (and very hard to see) scale bar in the bottom left-hand corner</p>
+</li>
+</ol>
+</div>
+<div class="section" id="moving-the-scaleline-control">
+<h2>3.2.2. Moving the ScaleLine Control<a class="headerlink" href="#moving-the-scaleline-control" title="Permalink to this headline">¶</a></h2>
+<p>You may find the scale bar a bit hard to read over the Medford imagery. There are a few approaches to take in order to improve scale visibility.  If you want to keep the control inside the map viewport, you can add some style declarations within the CSS of your document. To test this out, you can include a background color and padding to the scale bar with something like the following:</p>
+<blockquote>
+<div><div class="highlight-html"><div class="highlight"><pre>.olControlScaleLine {
+    background: white;
+    padding: 10px;
+}
+</pre></div>
+</div>
+</div></blockquote>
+<p>However, for the sake of this exercise, let&#8217;s say you think the map viewport is getting unbearably crowded. To avoid such over-crowding, you can display the scale in a different location. To accomplish this, we need to first create an additional element in our markup and then tell the scale control to render itself within this new element.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Remove any scale style declarations, and create a new block level element in the <tt class="docutils literal"><span class="pre">&lt;body&gt;</span></tt> of your page. To make this element easy to refer to, we&#8217;ll give it an <tt class="docutils literal"><span class="pre">id</span></tt> attribute. Insert the following markup somewhere in the <tt class="docutils literal"><span class="pre">&lt;body&gt;</span></tt> of your <tt class="docutils literal"><span class="pre">map.html</span></tt> page. (Placing the scale element right after the map viewport element <tt class="docutils literal"><span class="pre">&lt;div</span> <span class="pre">id=&quot;map-id&quot;&gt;&lt;/div&gt;</span></tt> makes sense.):</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;scaleline-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now modify the code creating the scale control so that it refers to the <tt class="docutils literal"><span class="pre">scaleline-id</span></tt> element:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">scaleline</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">ScaleLine</span><span class="p">({</span>
+    <span class="nx">div</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;scaleline-id&quot;</span><span class="p">)</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and open <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+<li><p class="first">You may decide that you want to add a bit of style to the widget. To do this, we can use the <tt class="docutils literal"><span class="pre">#scaleline-id</span></tt> selector in our CSS. Make the font smaller and give the widget some margin, by adding the following style declarations:</p>
+<div class="highlight-html"><div class="highlight"><pre>#scaleline-id {
+    margin: 10px;
+    font-size: xx-small;
+}
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now save your changes and view <tt class="docutils literal"><span class="pre">map.html</span></tt> again in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/scaleline2.png" src="../_images/scaleline2.png" />
+<p class="caption">A custom styled scale bar outside the map viewport.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="select.html" title="3.3. Selecting Features"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="overview.html" title="3.1. Creating an Overview Map"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">3. Working With Controls</a> &raquo;</li>
+        <li><a href="#">3.2. Displaying a Scale Bar</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

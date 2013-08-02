@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.1. Web Map Service Layers &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="2. Working With Layers" href="index.html" />
+    <link rel="next" title="2.2. Cached Tiles" href="cached.html" />
+    <link rel="prev" title="2. Working With Layers" href="index.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.1. Web Map Service Layers</a><ul>
+<li><a class="reference internal" href="#creating-a-layer">2.1.1. Creating a Layer</a></li>
+<li><a class="reference internal" href="#the-openlayers-layer-wms-constructor">2.1.2. The OpenLayers.Layer.WMS Constructor</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">2. Working With Layers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cached.html"
+                        title="next chapter">2.2. Cached Tiles</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="web-map-service-layers">
+<span id="openlayers-layers-wms"></span><h1>2.1. Web Map Service Layers<a class="headerlink" href="#web-map-service-layers" title="Permalink to this headline">¶</a></h1>
+<p>When you add a layer to your map, the layer is typically responsible for
+fetching the data to be displayed. The data requested can be either raster or
+vector data. You can think of raster data as information rendered as an image on
+the server side. Vector data is delivered as structured information from the
+server and may be rendered for display on the client (your browser).</p>
+<p>There are many different types of services that provide raster map data. This
+section deals with providers that conform with the <abbr title="Open Geospatial Consortium, Inc.">OGC</abbr> <a class="reference external" href="http://www.opengeospatial.org/standards/wms">Web Map Service (WMS)</a> specification.</p>
+<div class="section" id="creating-a-layer">
+<h2>2.1.1. Creating a Layer<a class="headerlink" href="#creating-a-layer" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ll start with a fully working map example and modify the layers to get an
+understanding of how they work.</p>
+<p>Let&#8217;s take a look at the following code:</p>
+<div class="highlight-html" id="openlayers-layers-wms-example"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">imagery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Global Imagery&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;http://maps.opengeo.org/geowebcache/service/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;bluemarble&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">imagery</span><span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+<p class="rubric">Tasks</p>
+<ol class="arabic simple">
+<li>If you haven&#8217;t already done so, save the text above as <tt class="docutils literal"><span class="pre">map.html</span></tt> in the
+root of your workshop directory.</li>
+<li>Open the page in your browser to confirm things work:
+<a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></li>
+</ol>
+</div>
+<div class="section" id="the-openlayers-layer-wms-constructor">
+<h2>2.1.2. The OpenLayers.Layer.WMS Constructor<a class="headerlink" href="#the-openlayers-layer-wms-constructor" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">OpenLayers.Layer.WMS</span></tt> constructor requires 3 arguments and an
+optional fourth. See the <a class="reference external" href="http://dev.openlayers.org/apidocs/files/OpenLayers/Layer/WMS-js.html#OpenLayers.Layer.WMS.OpenLayers.Layer.WMS">API reference</a>
+for a complete description of these arguments.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">imagery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+    <span class="s2">&quot;Global Imagery&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://maps.opengeo.org/geowebcache/service/wms&quot;</span><span class="p">,</span>
+    <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;bluemarble&quot;</span><span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>The first argument, <tt class="docutils literal"><span class="pre">&quot;Global</span> <span class="pre">Imagery&quot;</span></tt>, is a string name for the layer. This
+is only used by components that display layer names (like a layer switcher) and
+can be anything of your choosing.</p>
+<p>The second argument, <tt class="docutils literal"><span class="pre">&quot;http://maps.opengeo.org/geowebcache/service/wms&quot;</span></tt>, is
+the string URL for a Web Map Service.</p>
+<p>The third argument, <tt class="docutils literal"><span class="pre">{layers:</span> <span class="pre">&quot;bluemarble&quot;}</span></tt> is an object literal with
+properties that become parameters in our WMS request. In this case, we&#8217;re
+requesting images rendered from a single layer identified by the name
+<tt class="docutils literal"><span class="pre">&quot;bluemarble&quot;</span></tt>.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">This same WMS offers a layer named <tt class="docutils literal"><span class="pre">&quot;openstreetmap&quot;</span></tt>. Change the value of
+the <tt class="docutils literal"><span class="pre">layers</span></tt> param from <tt class="docutils literal"><span class="pre">&quot;bluemarble&quot;</span></tt> to <tt class="docutils literal"><span class="pre">&quot;openstreetmap&quot;</span></tt>.</p>
+</li>
+<li><p class="first">In addition to the <tt class="docutils literal"><span class="pre">layers</span></tt> parameter, a request for WMS imagery allows
+for you to specify the image format.  The default for this layer is
+<tt class="docutils literal"><span class="pre">&quot;image/jpeg&quot;</span></tt>.  Try adding a second property in the params object named
+<tt class="docutils literal"><span class="pre">format</span></tt>.  Set the value to another image type (e.g. <tt class="docutils literal"><span class="pre">&quot;image/png&quot;</span></tt>).</p>
+<p>Your revised OpenLayers.Layer.WMS Constructor should look like:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">imagery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+    <span class="s2">&quot;Global Imagery&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://maps.opengeo.org/geowebcache/service/wms&quot;</span><span class="p">,</span>
+    <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;openstreetmap&quot;</span><span class="p">,</span> <span class="nx">format</span><span class="o">:</span> <span class="s2">&quot;image/png&quot;</span><span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and reload the map:
+<a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+</li>
+</ol>
+<div class="figure">
+<img alt="../_images/wms1.png" src="../_images/wms1.png" />
+<p class="caption">A map displaying the <tt class="docutils literal"><span class="pre">&quot;openstreetmap&quot;</span></tt> layer as <tt class="docutils literal"><span class="pre">&quot;image/png&quot;</span></tt>.</p>
+</div>
+<p>Having worked with dynamically rendered data from a Web Map Service, let&#8217;s move
+on to learn about <a class="reference internal" href="cached.html#openlayers-layers-cached"><em>cached tile services</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="cached.html" title="2.2. Cached Tiles"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="index.html" title="2. Working With Layers"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">2. Working With Layers</a> &raquo;</li>
+        <li><a href="#">2.1. Web Map Service Layers</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.1. Working with Vector Layers &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="4. Vector Layers" href="index.html" />
+    <link rel="next" title="4.2. Creating New Features" href="draw.html" />
+    <link rel="prev" title="4. Vector Layers" href="index.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.1. Working with Vector Layers</a><ul>
+<li><a class="reference internal" href="#openlayers-format">4.1.1. OpenLayers.Format</a><ul>
+<li><a class="reference internal" href="#geojson-example">4.1.1.1. GeoJSON Example</a></li>
+<li><a class="reference internal" href="#gml-example">4.1.1.2. GML Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#openlayers-protocol">4.1.2. OpenLayers.Protocol</a></li>
+<li><a class="reference internal" href="#openlayers-strategy">4.1.3. OpenLayers.Strategy</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">4. Vector Layers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="draw.html"
+                        title="next chapter">4.2. Creating New Features</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="working-with-vector-layers">
+<span id="openlayers-vector-basics"></span><h1>4.1. Working with Vector Layers<a class="headerlink" href="#working-with-vector-layers" title="Permalink to this headline">¶</a></h1>
+<p>The base <tt class="docutils literal"><span class="pre">OpenLayers.Layer.Vector</span></tt> constructor provides a fairly flexible layer type. By default, when you create a new vector layer, no assumptions are made about where the features for the layer will come from. In addition, a very basic style is applied when rendering those features. Customizing the rendering style is addressed in an <a class="reference internal" href="style-intro.html#openlayers-vector-style-intro"><em>upcoming section</em></a>. This section introduces the basics of vector data <a class="reference internal" href="#openlayers-vector-basics-format"><em>formats</em></a>, the <a class="reference internal" href="#openlayers-vector-basics-protocol"><em>protocols</em></a> used to read and write feature data, and various <a class="reference internal" href="#openlayers-vector-basics-strategy"><em>strategies</em></a> for engaging with those protocols.</p>
+<p>In dealing with vector layers and features, it is somewhat useful to consider a postal analogy. When writing a letter, you have to know some of the rules imposed by the postal service, such as how addresses are formatted or what an envelope can contain. You also have to know something about your recipient: primarily what language they speak. Finally, you have to make a decision about when to go to the post office to send your letter. Having this analogy in mind may help in understanding the concepts below.</p>
+<div class="section" id="openlayers-format">
+<span id="openlayers-vector-basics-format"></span><h2>4.1.1. OpenLayers.Format<a class="headerlink" href="#openlayers-format" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">OpenLayers.Format</span></tt> classes in OpenLayers are responsible for parsing data from the server representing vector features. Following the postal analogy, the format you choose is analogous to the language in which you write your letter. The format turns raw feature data into <tt class="docutils literal"><span class="pre">OpenLayers.Feature.Vector</span></tt> objects.  Typically, format is also responsible for reversing this operation.</p>
+<p>Consider the two blocks of data below. Both represent the same <tt class="docutils literal"><span class="pre">OpenLayers.Feature.Vector</span></tt> object (a point in Barcelona, Spain). The first is serialized as <a class="reference external" href="http://geojson.org">GeoJSON</a> (using the <tt class="docutils literal"><span class="pre">OpenLayers.Format.GeoJSON</span></tt> parser). The second is serialized as <abbr title="OGC Geography Markup Language">GML</abbr> (using the <tt class="docutils literal"><span class="pre">OpenLayers.Format.GML.v3</span></tt> parser).</p>
+<div class="section" id="geojson-example">
+<h3>4.1.1.1. GeoJSON Example<a class="headerlink" href="#geojson-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;OpenLayers.Feature.Vector_107&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="s2">&quot;geometry&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;Point&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;coordinates&quot;</span><span class="o">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">104.98</span><span class="p">,</span> <span class="mf">39.76</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="gml-example">
+<h3>4.1.1.2. GML Example<a class="headerlink" href="#gml-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;</span>
+<span class="nt">&lt;gml:featureMember</span>
+    <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;feature:feature</span> <span class="na">fid=</span><span class="s">&quot;OpenLayers.Feature.Vector_107&quot;</span> <span class="na">xmlns:feature=</span><span class="s">&quot;http://example.com/feature&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;feature:geometry&gt;</span>
+            <span class="nt">&lt;gml:Point&gt;</span>
+                <span class="nt">&lt;gml:pos&gt;</span>-104.98, 39.76<span class="nt">&lt;/gml:pos&gt;</span>
+            <span class="nt">&lt;/gml:Point&gt;</span>
+        <span class="nt">&lt;/feature:geometry&gt;</span>
+    <span class="nt">&lt;/feature:feature&gt;</span>
+<span class="nt">&lt;/gml:featureMember&gt;</span>
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="http://openlayers.org/dev/examples/vector-formats.html">vector formats</a> example for a
+demonstration of translation between a few OpenLayers formats.</p>
+</div>
+</div>
+<div class="section" id="openlayers-protocol">
+<span id="openlayers-vector-basics-protocol"></span><h2>4.1.2. OpenLayers.Protocol<a class="headerlink" href="#openlayers-protocol" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">OpenLayers.Protocol</span></tt> classes refer to specific communication protocols for reading and writing vector data. A protocol instance may have a reference to a specific <tt class="docutils literal"><span class="pre">OpenLayers.Format</span></tt>. So, you might be working with a service that communicates via HTTP and deals in GeoJSON features. Or, you might be working with a service that implements <abbr title="OGC Web Feature Service">WFS</abbr> and deals in <abbr title="OGC Geography Markup Language">GML</abbr>. In these cases you would construct an <tt class="docutils literal"><span class="pre">OpenLayers.Protocol.HTTP</span></tt> with a reference to an <tt class="docutils literal"><span class="pre">OpenLayers.Format.GeoJSON</span></tt> object or an <tt class="docutils literal"><span class="pre">OpenLayers.Protocol.WFS</span></tt> with a reference to an <tt class="docutils literal"><span class="pre">OpenLayers.Format.GML</span></tt> object.</p>
+<p>Back on the postal analogy, the protocol is akin to the rules about how an envelope must be addressed. Ideally, a protocol doesn&#8217;t specify anything about the format of the content being delivered (the post office doesn&#8217;t care about the language used in a letter; ideally, they only need to read the envelope).</p>
+<p>Neither protocols nor formats are explicitly tied to an <tt class="docutils literal"><span class="pre">OpenLayers.Layer.Vector</span></tt> instance. The layer provides a view of the data for the user, and the protocol shouldn&#8217;t have to bother itself about that view.</p>
+</div>
+<div class="section" id="openlayers-strategy">
+<span id="openlayers-vector-basics-strategy"></span><h2>4.1.3. OpenLayers.Strategy<a class="headerlink" href="#openlayers-strategy" title="Permalink to this headline">¶</a></h2>
+<p>Loosely speaking, the <tt class="docutils literal"><span class="pre">OpenLayers.Strategy</span></tt> classes tie together the layer and the protocol. Strategies deal with <cite>when</cite> to make requests for data (or <cite>when</cite> to send modifications). Strategies can also determine <cite>how</cite> to prepare features before they end up in a layer.</p>
+<p>The <tt class="docutils literal"><span class="pre">OpenLayers.Strategy.BBOX</span></tt> strategy says &#8220;request new features whenever the map bounds are outside the bounds of the previously requested set of features.&#8221;</p>
+<p>The <tt class="docutils literal"><span class="pre">OpenLayers.Strategy.Cluster</span></tt> strategy says &#8220;before passing any new features to the layer, clump them together in clusters based on proximity to other features.&#8221;</p>
+<p>In creating a vector layer, you choose the mix: one protocol (typically) with a reference to one format, and any number of strategies. And, all of this is optional. You can very well create a vector layer <cite>without</cite> protocol or strategies and manually make requests for features, parse those features, and add them to the layer.</p>
+<p>Having dispensed with the basics of formats, protocols, and strategies, we&#8217;re ready to start <a class="reference internal" href="draw.html#openlayers-vector-draw"><em>creating new features</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="draw.html" title="4.2. Creating New Features"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="index.html" title="4. Vector Layers"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">4. Vector Layers</a> &raquo;</li>
+        <li><a href="#">4.1. Working with Vector Layers</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

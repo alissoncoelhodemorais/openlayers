@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.3. Persisting Features &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="4. Vector Layers" href="index.html" />
+    <link rel="next" title="4.4. Understanding Style" href="style-intro.html" />
+    <link rel="prev" title="4.2. Creating New Features" href="draw.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="draw.html"
+                        title="previous chapter">4.2. Creating New Features</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="style-intro.html"
+                        title="next chapter">4.4. Understanding Style</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="persisting-features">
+<span id="openlayers-vector-persist"></span><h1>4.3. Persisting Features<a class="headerlink" href="#persisting-features" title="Permalink to this headline">¶</a></h1>
+<p>Persistence of vector feature data is the job of an <tt class="docutils literal"><span class="pre">OpenLayers.Protocol</span></tt>. The <abbr title="OGC Web Feature Service">WFS</abbr> specification defines a protocol for reading and writing feature data. In this section, we&#8217;ll look at an example that uses an <tt class="docutils literal"><span class="pre">OpenLayers.Protocol.WFS</span></tt> instance with a vector layer.</p>
+<p>A full-fledged editing application involves more user interaction (and GUI elements) than is practical to demonstrate in a short example. However, we can add an <tt class="docutils literal"><span class="pre">OpenLayers.Control.Panel</span></tt> to a map that accomplishes a few of the basic editing tasks.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Open your text editor and paste in the text from the start of the  <a class="reference internal" href="draw.html#openlayers-vector-draw-example"><em>previous section</em></a>.  Save this as <tt class="docutils literal"><span class="pre">map.html</span></tt>.</p>
+</li>
+<li><p class="first">OpenLayers doesn&#8217;t provide controls for deleting or saving features.  The <tt class="docutils literal"><span class="pre">extras</span></tt> folder in this workshop includes code for those controls bundled together in a control panel. These controls are specific to editing a vector layer with multipolygon geometries, so they will work with our buildings example. In the <tt class="docutils literal"><span class="pre">&lt;head&gt;</span></tt> of your <tt class="docutils literal"><span class="pre">map.html</span></tt> document, <strong>after</strong> the OpenLayers script tag, insert the following to pull in the required code and stylesheet for the controls:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;extras/editing-panel.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;extras/DeleteFeature.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;extras/EditingPanel.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now we&#8217;ll give the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer an <tt class="docutils literal"><span class="pre">OpenLayers.Strategy.Save</span></tt>.  This strategy is designed to trigger commits on the protocol and deal with the results.  The <tt class="docutils literal"><span class="pre">buildings</span></tt> layer currently has a single strategy.  Modify the layer creation code to include another:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">(),</span>
+        <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">Save</span><span class="p">()</span>
+    <span class="p">],</span>
+    <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+        <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+        <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+        <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+        <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+    <span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Finally, we&#8217;ll create the editing panel and add it to the map.  Somewhere in your map initialization code after creating the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer, insert the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">panel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EditingPanel</span><span class="p">(</span><span class="nx">buildings</span><span class="p">);</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">panel</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now save your changes and load <tt class="docutils literal"><span class="pre">map.html</span></tt> in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/persist1.png" src="../_images/persist1.png" />
+<p class="caption">Modifying a building footprint.</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="style-intro.html" title="4.4. Understanding Style"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="draw.html" title="4.2. Creating New Features"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">4. Vector Layers</a> &raquo;</li>
+        <li><a href="#">4.3. Persisting Features</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

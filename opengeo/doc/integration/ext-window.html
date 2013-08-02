@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.6. The Ext JS Window &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="5. Integration with Other Frameworks" href="index.html" />
+    <link rel="prev" title="5.5. The Ext JS Slider" href="ext-slider.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5.6. The Ext JS Window</a><ul>
+<li><a class="reference internal" href="#displaying-feature-information-in-a-window">5.6.1. Displaying Feature Information in a Window</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ext-slider.html"
+                        title="previous chapter">5.5. The Ext JS Slider</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-ext-js-window">
+<span id="openlayers-integration-ext-window"></span><h1>5.6. The Ext JS Window<a class="headerlink" href="#the-ext-js-window" title="Permalink to this headline">¶</a></h1>
+<p>Ext JS provides windows with behavior and looks familiar to desktop application
+developers. The theme for an Ext based application is moderately configurable,
+though developing custom themes can be labor-intensive. Using Ext windows to
+display map related information gives your application a well integrated feel if
+you are using Ext widgets for non-map related parts of your application.</p>
+<p>An Ext window can be created with no existing markup. The following code creates
+a modeless window and opens it.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">win</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ext</span><span class="p">.</span><span class="nx">Window</span><span class="p">({</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Window&quot;</span><span class="p">,</span>
+    <span class="nx">items</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nx">html</span><span class="o">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+<span class="nx">win</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Ext builds complex elements based on containers with one or more items. The
+window above contains a panel element that was created from the string
+<tt class="docutils literal"><span class="pre">&quot;Hello!&quot;</span></tt> Using the above technique, windows can be created to display
+information about features on your map.</p>
+<div class="section" id="displaying-feature-information-in-a-window">
+<h2>5.6.1. Displaying Feature Information in a Window<a class="headerlink" href="#displaying-feature-information-in-a-window" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">At the end of the <a class="reference internal" href="ext-slider.html#openlayers-integration-ext-slider"><em>previous section</em></a>, you should have something like the
+code below in your <tt class="docutils literal"><span class="pre">map.html</span></tt> file. Open this file in your text editor and
+confirm the contents are similar to the following:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nf">#slider-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">492px</span><span class="p">;</span>
+                <span class="k">margin</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;ext/resources/css/ext-all.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;ext/adapter/ext/ext-base.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;ext/ext-all.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;slider-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+                <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+                <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+            <span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+                <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+                <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+            <span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Medford Streets &amp; Buildings&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;/geoserver/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;medford&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">()],</span>
+                <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+                    <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+                    <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+                    <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+                    <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+                    <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+                <span class="p">})</span>
+            <span class="p">});</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">buildings</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ext</span><span class="p">.</span><span class="nx">Slider</span><span class="p">({</span>
+                <span class="nx">renderTo</span><span class="o">:</span> <span class="s2">&quot;slider-id&quot;</span><span class="p">,</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="nx">listeners</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">change</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">base</span><span class="p">.</span><span class="nx">setOpacity</span><span class="p">(</span><span class="nx">val</span> <span class="o">/</span> <span class="mi">100</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">To this example, we&#8217;ll be adding an <tt class="docutils literal"><span class="pre">OpenLayers.Control.SelectFeature</span></tt>
+control so that the user can select a feature. In your map initialization code,
+add the following <cite>after</cite> the creation of your <tt class="docutils literal"><span class="pre">buildings</span></tt> layer:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">select</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">SelectFeature</span><span class="p">([</span><span class="nx">buildings</span><span class="p">]);</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">select</span><span class="p">);</span>
+<span class="nx">select</span><span class="p">.</span><span class="nx">activate</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Next we need to create a listener for the <tt class="docutils literal"><span class="pre">featureselected</span></tt> event on our
+<tt class="docutils literal"><span class="pre">buildings</span></tt> layer.  We&#8217;ll create a window populated with feature
+information when the user selects a feature (by clicking on it with the
+mouse).  In addition, we want to destroy the window when a feature is
+unselected.  We can do this by listening for the <tt class="docutils literal"><span class="pre">featureunselected</span></tt>
+event.  Insert the following in your map initialization code somehere
+<cite>after</cite> the creation of the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">dialog</span><span class="p">;</span>
+<span class="nx">buildings</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+    <span class="nx">featureselected</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">feature</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">feature</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">area</span> <span class="o">=</span> <span class="nx">feature</span><span class="p">.</span><span class="nx">geometry</span><span class="p">.</span><span class="nx">getArea</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">feature</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="s2">&quot;Building: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; Area: &quot;</span> <span class="o">+</span> <span class="nx">area</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="nx">dialog</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ext</span><span class="p">.</span><span class="nx">Window</span><span class="p">({</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Feature Info&quot;</span><span class="p">,</span>
+            <span class="nx">layout</span><span class="o">:</span> <span class="s2">&quot;fit&quot;</span><span class="p">,</span>
+            <span class="nx">height</span><span class="o">:</span> <span class="mi">80</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span> <span class="mi">130</span><span class="p">,</span>
+            <span class="nx">plain</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">items</span><span class="o">:</span> <span class="p">[{</span>
+                <span class="nx">border</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">bodyStyle</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">padding</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">fontSize</span><span class="o">:</span> <span class="mi">13</span>
+                <span class="p">},</span>
+                <span class="nx">html</span><span class="o">:</span> <span class="nx">output</span>
+            <span class="p">}]</span>
+        <span class="p">});</span>
+        <span class="nx">dialog</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+    <span class="p">},</span>
+    <span class="nx">featureunselected</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">dialog</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes to <tt class="docutils literal"><span class="pre">map.html</span></tt> and open the page in your browser:
+<a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/ext-window1.png" src="../_images/ext-window1.png" />
+<p class="caption">A map that displays feature information in a window.</p>
+</div>
+</li>
+</ol>
+<p class="rubric">Bonus Tasks</p>
+<ol class="arabic simple">
+<li>Generally speaking, setting element styles in code is bad.  Ext allows for
+easy style declarations in the component configuration with the <tt class="docutils literal"><span class="pre">style</span></tt>
+and <tt class="docutils literal"><span class="pre">bodyStyle</span></tt> properties.  In addition, Ext makes it easy to set CSS
+class names for components via the <tt class="docutils literal"><span class="pre">cls</span></tt> property. Experiment with adding
+a class name to the window contents and using declarations in your CSS
+instead of the <tt class="docutils literal"><span class="pre">bodyStyle</span></tt> configuration option above.</li>
+<li>Find the <tt class="docutils literal"><span class="pre">Ext.Window</span></tt> constructor in the Ext documentation.  Change the
+configuration of the windows in your <tt class="docutils literal"><span class="pre">map.html</span></tt> example to make them modal
+windows. Your application will not receive browser events until the
+window is closed.</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="ext-slider.html" title="5.5. The Ext JS Slider"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">5. Integration with Other Frameworks</a> &raquo;</li>
+        <li><a href="#">5.6. The Ext JS Window</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

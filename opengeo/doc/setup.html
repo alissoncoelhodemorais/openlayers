@@ -1,0 +1,128 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Workshop Setup &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="index.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Workshop Setup</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#deploying-the-workshop-docs">Deploying the Workshop Docs</a></li>
+<li><a class="reference internal" href="#test-the-setup">Test the Setup</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="workshop-setup">
+<h1>Workshop Setup<a class="headerlink" href="#workshop-setup" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>This workshop requires that that PostgreSQL with PostGIS and GeoServer are  installed on workshop machines.  These instructions assume that the OpenGeo Suite installer was assumed to install both GeoServer and PostgreSQL.  GeoServer and PostgreSQL should be running before starting the workshop.  With the Suite install, these services can be started from the Suite Dashboard (on Windows,  you&#8217;ll also find items in the Start menu.)  As noted below, deploy the workshop documentation before starting the Suite.</p>
+</div>
+<div class="section" id="deploying-the-workshop-docs">
+<h2>Deploying the Workshop Docs<a class="headerlink" href="#deploying-the-workshop-docs" title="Permalink to this headline">¶</a></h2>
+<p>Extract the ol_workshop.zip archive to the :file`webapps` directory in your Suite install.  The location of this directory differs depending on your operating system.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Windows: <tt class="file docutils literal"><span class="pre">C:\Program</span> <span class="pre">Files\OpenGeo\OpenGeo</span> <span class="pre">Suite\webapps</span></tt></li>
+<li>Mac OS X: <tt class="file docutils literal"><span class="pre">/opt/opengeo/suite/webapps</span></tt></li>
+<li>Linux: <tt class="file docutils literal"><span class="pre">/var/lib/tomcat6/webapps/</span></tt></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Move the extracted <tt class="file docutils literal"><span class="pre">ol_workshop</span></tt> directory into your <tt class="file docutils literal"><span class="pre">webapps</span></tt> directory <strong>before</strong> starting the Suite.</p>
+</div>
+</div>
+<div class="section" id="test-the-setup">
+<h2>Test the Setup<a class="headerlink" href="#test-the-setup" title="Permalink to this headline">¶</a></h2>
+<p>Test GeoServer and Postgres Setup:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Start the OpenGeo Suite.</li>
+<li>Load <a class="reference external" href="http://localhost:8080/geoserver/">http://localhost:8080/geoserver/</a> in a browser. You should see GeoServer&#8217;s welcome screen.</li>
+<li>Navigate to the layers preview page. You should be able to see the medford layers listed in the table.</li>
+<li>Click on the OpenLayers preview link for the <tt class="docutils literal"><span class="pre">medford</span></tt> layer. You should see some elevation data with infrastructure data over it.</li>
+</ol>
+</div></blockquote>
+<p>Test Workshop Docs:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Load <a class="reference external" href="http://localhost:8080/ol_workshop/doc/">http://localhost:8080/ol_workshop/doc/</a> in a browser. You should see a the intro page for the workshop docs with links to lead you through the workshop.</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+        <li><a href="index.html">OpenLayers Workshop</a> &raquo;</li>
+        <li><a href="#">Workshop Setup</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

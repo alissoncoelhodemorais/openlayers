@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4.4. Understanding Style &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="4. Vector Layers" href="index.html" />
+    <link rel="next" title="4.5. Styling Vector Layers" href="style.html" />
+    <link rel="prev" title="4.3. Persisting Features" href="persist.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4.4. Understanding Style</a><ul>
+<li><a class="reference internal" href="#openlayers-filter">4.4.1. OpenLayers.Filter</a></li>
+<li><a class="reference internal" href="#symbolizers">4.4.2. Symbolizers</a></li>
+<li><a class="reference internal" href="#openlayers-rule">4.4.3. OpenLayers.Rule</a></li>
+<li><a class="reference internal" href="#openlayers-style">4.4.4. OpenLayers.Style</a></li>
+<li><a class="reference internal" href="#openlayers-stylemap">4.4.5. OpenLayers.StyleMap</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="persist.html"
+                        title="previous chapter">4.3. Persisting Features</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="style.html"
+                        title="next chapter">4.5. Styling Vector Layers</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="understanding-style">
+<span id="openlayers-vector-style-intro"></span><h1>4.4. Understanding Style<a class="headerlink" href="#understanding-style" title="Permalink to this headline">¶</a></h1>
+<p>When styling HTML elements, you might use CSS like the following:</p>
+<div class="highlight-html"><div class="highlight"><pre>.someClass {
+    background-color: blue;
+    border-width: 1px;
+    border-color: olive;
+}
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">.someClass</span></tt> text is a selector (in this case it selects all elements that include the class name <tt class="docutils literal"><span class="pre">&quot;someClass&quot;</span></tt>) and the block that follows is a group of named properties and values, otherwise known as style declarations.</p>
+<div class="section" id="openlayers-filter">
+<h2>4.4.1. OpenLayers.Filter<a class="headerlink" href="#openlayers-filter" title="Permalink to this headline">¶</a></h2>
+<p>When styling features in OpenLayers, your selectors are <tt class="docutils literal"><span class="pre">OpenLayers.Filter</span></tt> objects.  Assuming you want to apply a style to all features that have an  attribute named <tt class="docutils literal"><span class="pre">class</span></tt> with a value of <tt class="docutils literal"><span class="pre">&quot;someClass&quot;</span></tt>, you would start with a filter like the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">.</span><span class="nx">EQUAL_TO</span><span class="p">,</span>
+    <span class="nx">property</span><span class="o">:</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;someClass&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symbolizers">
+<h2>4.4.2. Symbolizers<a class="headerlink" href="#symbolizers" title="Permalink to this headline">¶</a></h2>
+<p>The equivalent of a declaration block in CSS is a <cite>symbolizer</cite> in OpenLayers (these are typically object literals). To paint features with a blue background and a 1 pixel wide olive stroke, you would use a symbolizer like the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="nx">strokeWidth</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">strokeColor</span><span class="o">:</span> <span class="s2">&quot;olive&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="openlayers-rule">
+<h2>4.4.3. OpenLayers.Rule<a class="headerlink" href="#openlayers-rule" title="Permalink to this headline">¶</a></h2>
+<p>To combine a filter with a symbolizer, we use an <tt class="docutils literal"><span class="pre">OpenLayers.Rule</span></tt> object. As such, a rule that says <cite>&#8220;paint all features with class equal to &#8216;someClass&#8217; using a 1px olive stroke and blue fill&#8221;</cite> would be created as follows:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Rule</span><span class="p">({</span>
+    <span class="nx">filter</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">({</span>
+        <span class="nx">type</span><span class="o">:</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">.</span><span class="nx">EQUAL_TO</span><span class="p">,</span>
+        <span class="nx">property</span><span class="o">:</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;someClass&quot;</span>
+    <span class="p">}),</span>
+    <span class="nx">symbolizer</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="nx">strokeWidth</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nx">strokeColor</span><span class="o">:</span> <span class="s2">&quot;olive&quot;</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="openlayers-style">
+<h2>4.4.4. OpenLayers.Style<a class="headerlink" href="#openlayers-style" title="Permalink to this headline">¶</a></h2>
+<p>As in CSS page, where you may have many rules&#8211; selectors and associated declaration blocks&#8211;you are likely to have more than one rule for styling the features of a given map layer. You group <tt class="docutils literal"><span class="pre">OpenLayers.Rule</span></tt> objects together in an <tt class="docutils literal"><span class="pre">OpenLayers.Style</span></tt> object. A style object is typically constructed with a base symbolizer. When a feature is rendered, the base symbolizer is extended with symbolizers from all rules that apply to the feature.</p>
+<p>So, if you want all features to be colored red except for those that have a <tt class="docutils literal"><span class="pre">class</span></tt> attribute with the value of <tt class="docutils literal"><span class="pre">&quot;someClass&quot;</span></tt> (and you want those features colored blue with an 1px olive stroke), you would create a style that looked like the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">myStyle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Style</span><span class="p">({</span>
+    <span class="c1">// this is the base symbolizer</span>
+    <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;red&quot;</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Rule</span><span class="p">({</span>
+            <span class="nx">filter</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">({</span>
+                <span class="nx">type</span><span class="o">:</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Filter</span><span class="p">.</span><span class="nx">Comparison</span><span class="p">.</span><span class="nx">EQUAL_TO</span><span class="p">,</span>
+                <span class="nx">property</span><span class="o">:</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;someClass&quot;</span>
+            <span class="p">}),</span>
+            <span class="nx">symbolizer</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                <span class="nx">strokeWidth</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">strokeColor</span><span class="o">:</span> <span class="s2">&quot;olive&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}),</span>
+        <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Rule</span><span class="p">({</span><span class="nx">elseFilter</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you don&#8217;t include any rules in a style, <cite>all</cite> of the features in a layer will be rendered with the base symbolizer (first argument to the <tt class="docutils literal"><span class="pre">OpenLayers.Style</span></tt> constructor). If you include <cite>any</cite> rules in your style, only features that pass at least one of the rule constraints will be rendered. The <tt class="docutils literal"><span class="pre">elseFilter</span></tt> property of a rule let&#8217;s you provide a rule that applies to all features that haven&#8217;t met any of the constraints of your other rules.</p>
+</div>
+</div>
+<div class="section" id="openlayers-stylemap">
+<h2>4.4.5. OpenLayers.StyleMap<a class="headerlink" href="#openlayers-stylemap" title="Permalink to this headline">¶</a></h2>
+<p>CSS allows for pseudo-classes on selectors. These basically limit the application of style declarations based on contexts such as mouse position, neighboring elements, or browser history, that are not easily represented in the selector. In OpenLayers, a somewhat similar concept is one of &#8220;render intent.&#8221; Without defining the full set of render intents that you can use, the library allows for sets of rules to apply only under specific contexts.</p>
+<p>So, the <tt class="docutils literal"><span class="pre">active</span></tt> pseudo-class in CSS limits the selector to the currently selected element (e.g. <tt class="docutils literal"><span class="pre">a:active</span></tt>). In the same way, the <tt class="docutils literal"><span class="pre">&quot;select&quot;</span></tt> render intent applies to currently selected features. The mapping of render intents to groups of rules is called an <tt class="docutils literal"><span class="pre">OpenLayers.StyleMap</span></tt>.</p>
+<p>Following on with the above examples, if you wanted all features to be painted fuchsia when selected, and otherwise you wanted the <tt class="docutils literal"><span class="pre">myStyle</span></tt> defined above to be applied, you would create an <tt class="docutils literal"><span class="pre">OpenLayers.StyleMap</span></tt> like the following:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">styleMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">StyleMap</span><span class="p">({</span>
+    <span class="s2">&quot;default&quot;</span><span class="o">:</span> <span class="nx">myStyle</span><span class="p">,</span>
+    <span class="s2">&quot;select&quot;</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Style</span><span class="p">({</span>
+        <span class="nx">fillColor</span><span class="o">:</span> <span class="s2">&quot;fuchsia&quot;</span>
+    <span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>To determine how features in a vector layer are styled, you need to construct the layer with an <tt class="docutils literal"><span class="pre">OpenLayers.StyleMap</span></tt>.</p>
+<p>With the basics of styling under your belt, it&#8217;s time to move on to <a class="reference internal" href="style.html#openlayers-style"><em>styling vector layers</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="style.html" title="4.5. Styling Vector Layers"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="persist.html" title="4.3. Persisting Features"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">4. Vector Layers</a> &raquo;</li>
+        <li><a href="#">4.4. Understanding Style</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

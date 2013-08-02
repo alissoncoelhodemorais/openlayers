@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3.3. Selecting Features &mdash; OpenLayers Workshop</title>
+    
+    <link rel="stylesheet" href="../_static/extra.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.13',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="OpenLayers Workshop" href="../index.html" />
+    <link rel="up" title="3. Working With Controls" href="index.html" />
+    <link rel="next" title="4. Vector Layers" href="../vector/index.html" />
+    <link rel="prev" title="3.2. Displaying a Scale Bar" href="scaleline.html" />
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 class="logo"><a href="http://opengeo.org/"><img src="../_static/img/opengeo-logo.png" alt="OpenGeo" /></a></h1>
+            <h2 class="docstitle"><a href="../index.html">OpenLayers Workshop</a></h2>
+        </div>
+    </div>
+
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.3. Selecting Features</a><ul>
+<li><a class="reference internal" href="#create-a-vector-layer-and-a-selectfeature-control">3.3.1. Create a Vector Layer and a SelectFeature Control</a></li>
+<li><a class="reference internal" href="#displaying-building-information-on-feature-selection">3.3.2. Displaying Building Information on Feature Selection</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scaleline.html"
+                        title="previous chapter">3.2. Displaying a Scale Bar</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../vector/index.html"
+                        title="next chapter">4. Vector Layers</a></p>
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="selecting-features">
+<span id="openlayers-controls-select"></span><h1>3.3. Selecting Features<a class="headerlink" href="#selecting-features" title="Permalink to this headline">¶</a></h1>
+<p>So far we have been using WMS to render raster images and overlay them in OpenLayers. We can also pull features as vectors and draw them on top of a base map. One of the advantages of serving vector data is that users can interact with the data. In this example, we create a vector layer where users can select and view feature information.</p>
+<div class="section" id="create-a-vector-layer-and-a-selectfeature-control">
+<h2>3.3.1. Create a Vector Layer and a SelectFeature Control<a class="headerlink" href="#create-a-vector-layer-and-a-selectfeature-control" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">Let&#8217;s start with the working example from the <a class="reference internal" href="scaleline.html#openlayers-controls-scaleline"><em>previous section</em></a>.  Open <tt class="docutils literal"><span class="pre">map.html</span></tt> in your text editor and make sure it looks something like the following:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>My Map<span class="nt">&lt;/title&gt;</span>
+        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;openlayers/theme/default/style.css&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;style&gt;</span>
+            <span class="nf">#map-id</span> <span class="p">{</span>
+                <span class="k">width</span><span class="o">:</span> <span class="m">512px</span><span class="p">;</span>
+                <span class="k">height</span><span class="o">:</span> <span class="m">256px</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nf">#scaleline-id</span> <span class="p">{</span>
+                <span class="k">margin</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span>
+                <span class="k">font-size</span><span class="o">:</span> <span class="k">xx-small</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="nt">&lt;/style&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;openlayers/lib/OpenLayers.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;h1&gt;</span>My Map<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;map-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;scaleline-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;script&gt;</span>
+            <span class="kd">var</span> <span class="nx">medford</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Bounds</span><span class="p">(</span>
+                <span class="mi">4284890</span><span class="p">,</span> <span class="mi">253985</span><span class="p">,</span>
+                <span class="mi">4288865</span><span class="p">,</span> <span class="mi">257980</span>
+            <span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s2">&quot;map-id&quot;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">projection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Projection</span><span class="p">(</span><span class="s2">&quot;EPSG:2270&quot;</span><span class="p">),</span>
+                <span class="nx">units</span><span class="o">:</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+                <span class="nx">maxExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">restrictedExtent</span><span class="o">:</span> <span class="nx">medford</span><span class="p">,</span>
+                <span class="nx">maxResolution</span><span class="o">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                <span class="nx">numZoomLevels</span><span class="o">:</span> <span class="mi">5</span>
+            <span class="p">});</span>
+
+            <span class="kd">var</span> <span class="nx">base</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">WMS</span><span class="p">(</span>
+                <span class="s2">&quot;Medford Streets &amp; Buildings&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;/geoserver/wms&quot;</span><span class="p">,</span>
+                <span class="p">{</span><span class="nx">layers</span><span class="o">:</span> <span class="s2">&quot;medford&quot;</span><span class="p">}</span>
+            <span class="p">);</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">base</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">scaleline</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">ScaleLine</span><span class="p">({</span>
+                <span class="nx">div</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;scaleline-id&quot;</span><span class="p">)</span>
+            <span class="p">});</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">scaleline</span><span class="p">);</span>
+
+            <span class="nx">map</span><span class="p">.</span><span class="nx">zoomToMaxExtent</span><span class="p">();</span>
+        <span class="nt">&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Next add a vector layer that requests the building footprints for Medford, Oregon. Because this data will be rendered client-side (i.e., by your browser), users can interact with its features. Somewhere in your map initialization (after the <tt class="docutils literal"><span class="pre">map</span></tt> object is created), add the following code to create a vector layer that uses the <abbr title="OGC Web Feature Service">WFS</abbr> protocol:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">buildings</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">Vector</span><span class="p">(</span><span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">strategies</span><span class="o">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Strategy</span><span class="p">.</span><span class="nx">BBOX</span><span class="p">()],</span>
+    <span class="nx">protocol</span><span class="o">:</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Protocol</span><span class="p">.</span><span class="nx">WFS</span><span class="p">({</span>
+        <span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;1.1.0&quot;</span><span class="p">,</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/geoserver/wfs&quot;</span><span class="p">,</span>
+        <span class="nx">featureType</span><span class="o">:</span> <span class="s2">&quot;buildings&quot;</span><span class="p">,</span>
+        <span class="nx">featureNS</span><span class="o">:</span> <span class="s2">&quot;http://medford.opengeo.org&quot;</span><span class="p">,</span>
+        <span class="nx">srsName</span><span class="o">:</span> <span class="s2">&quot;EPSG:2270&quot;</span>
+    <span class="p">})</span>
+<span class="p">});</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">buildings</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">With the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer requesting and rendering building features, we can create a control that allows users to select buildings. In your map initialization code, add the following <cite>after</cite> the creation of your <tt class="docutils literal"><span class="pre">buildings</span></tt> layer:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">select</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">OpenLayers</span><span class="p">.</span><span class="nx">Control</span><span class="p">.</span><span class="nx">SelectFeature</span><span class="p">([</span><span class="nx">buildings</span><span class="p">]);</span>
+<span class="nx">map</span><span class="p">.</span><span class="nx">addControl</span><span class="p">(</span><span class="nx">select</span><span class="p">);</span>
+<span class="nx">select</span><span class="p">.</span><span class="nx">activate</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes to <tt class="docutils literal"><span class="pre">map.html</span></tt> and open the page in your browser:  <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a>. To see feature selection in action, use the mouse-click to select a building:</p>
+<div class="figure">
+<img alt="../_images/select1.png" src="../_images/select1.png" />
+<p class="caption">Using a control to select features from a vector layer.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="displaying-building-information-on-feature-selection">
+<h2>3.3.2. Displaying Building Information on Feature Selection<a class="headerlink" href="#displaying-building-information-on-feature-selection" title="Permalink to this headline">¶</a></h2>
+<p>We can use layer events to respond to feature selection. This is useful for displaying specific feature information to the user. The <tt class="docutils literal"><span class="pre">featureselected</span></tt> event is triggered on a vector layer each time a feature is selected. Here we add a listener for this event that will display feature information below the map.</p>
+<p class="rubric">Tasks</p>
+<ol class="arabic">
+<li><p class="first">First we need to add an element to display the feature information. Open <tt class="docutils literal"><span class="pre">map.html</span></tt> in your text editor and insert the following markup into the <tt class="docutils literal"><span class="pre">&lt;body&gt;</span></tt> of your page.</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;output-id&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Next we add some style declarations so that the feature information output doesn&#8217;t sit on top of the scale bar. Give your output element some margin, by adding the following within the <tt class="docutils literal"><span class="pre">&lt;style&gt;</span></tt> element:</p>
+<div class="highlight-html"><div class="highlight"><pre>#output-id {
+    margin: 10px 250px;
+}
+</pre></div>
+</div>
+</li>
+<li><p class="first">Finally, we create a listener for the <tt class="docutils literal"><span class="pre">featureselected</span></tt> event that will display feature information in the output element. Insert the following in your map initialization code after the creation of the <tt class="docutils literal"><span class="pre">buildings</span></tt> layer:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">buildings</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+    <span class="nx">featureselected</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">feature</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">feature</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">area</span> <span class="o">=</span> <span class="nx">feature</span><span class="p">.</span><span class="nx">geometry</span><span class="p">.</span><span class="nx">getArea</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">feature</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">output</span> <span class="o">=</span> <span class="s2">&quot;Building: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; Area: &quot;</span> <span class="o">+</span> <span class="nx">area</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;output-id&quot;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">output</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save your changes and refresh the <tt class="docutils literal"><span class="pre">map.html</span></tt> page in your browser: <a class="reference external" href="http://localhost:8080/ol_workshop/map.html">http://localhost:8080/ol_workshop/map.html</a></p>
+<div class="figure">
+<img alt="../_images/select2.png" src="../_images/select2.png" />
+<p class="caption">Displaying building information on feature selection.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../py-modindex.html" title="Python Module Index"
+                 >modules</a> |</li>
+            <li class="right" >
+              <a href="../vector/index.html" title="4. Vector Layers"
+                 accesskey="N">next</a> |</li>
+            <li class="right" >
+              <a href="scaleline.html" title="3.2. Displaying a Scale Bar"
+                 accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">OpenLayers Workshop</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">3. Working With Controls</a> &raquo;</li>
+        <li><a href="#">3.3. Selecting Features</a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2013, OpenGeo.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0;vertical-align:text-bottom;" src="../_static/img/cc-by-sa.png" /></a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+diff --git a/lib/OpenLayers/Events.js b/lib/OpenLayers/Events.js
+index 8699601..bb548b8 100644
+--- a/lib/OpenLayers/Events.js
++++ b/lib/OpenLayers/Events.js
+@@ -640,6 +640,30 @@ OpenLayers.Events = OpenLayers.Class({
+         }
+         // disable dragstart in IE so that mousedown/move/up works normally
+         OpenLayers.Event.observe(element, "dragstart", OpenLayers.Event.stop);
++        
++        // convert pointer events to touch events
++        var masterEvt; handleEvent = this.eventHandler;
++        function applyTouches(evt, type) {
++            if (evt.pointerId = masterEvt.pointerId) {
++                masterEvt = evt;
++                masterEvt.type = type;
++                masterEvt.touches = [];
++            }
++            masterEvt.touches.push(evt);
++            return masterEvt;
++        }
++        OpenLayers.Event.observe(element, 'MSPointerDown', function(evt) {
++            if (!masterEvt) {
++                masterEvt = evt;
++            }
++            handleEvent(applyTouches(evt, 'touchstart'));
++        });
++        OpenLayers.Event.observe(element, 'MSPointerMove', function(evt) {
++            handleEvent(applyTouches(evt, 'touchmove'));
++        });
++        OpenLayers.Event.observe(element, 'MSPointerUp', function(evt) {
++            handleEvent(applyTouches(evt, 'touchend'));
++        });
+     },
+     
+     /**
