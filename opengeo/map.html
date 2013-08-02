@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Map</title>
+<link rel="stylesheet" href="openlayers/theme/default/style.css"
+	type="text/css">
+<style>
+    #map-id {
+        width: 512px;
+        height: 256px;
+    }
+    .olControlAttribution {
+        font-size: 10px;
+        bottom: 5px;
+        right: 5px;
+    }
+</style>
+<script src="openlayers/lib/OpenLayers.js"></script>
+</head>
+<body>
+	<h1>My Map</h1>
+	<div id="map-id"></div>
+	<script>
+    var center = new OpenLayers.LonLat(-104.98, 39.76).transform(
+        'EPSG:4326', 'EPSG:3857'
+    );
+
+    var map = new OpenLayers.Map("map-id", {projection: 'EPSG:3857'});
+
+    var osm = new OpenLayers.Layer.OSM();
+    map.addLayer(osm);
+
+    map.setCenter(center, 9);
+</script>
+</body>
+</html>
